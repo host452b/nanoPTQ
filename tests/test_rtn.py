@@ -61,3 +61,12 @@ def test_quantize_model_rtn_no_linear_remains():
     quantize_model_rtn(model, bits=4, group_size=64)
     linear_layers = [m for m in model.modules() if isinstance(m, nn.Linear)]
     assert len(linear_layers) == 0
+
+
+def test_quantize_model_rtn_skip_modules():
+    model = nn.Sequential(nn.Linear(64, 64), nn.Linear(64, 32))
+    quantize_model_rtn(model, bits=4, group_size=64, skip_modules=["1"])
+    # Module "1" skipped → still nn.Linear
+    assert isinstance(model[1], nn.Linear), "skipped module should remain nn.Linear"
+    # Module "0" not skipped → replaced
+    assert isinstance(model[0], QuantLinear), "non-skipped module should be replaced"
