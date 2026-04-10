@@ -61,6 +61,10 @@ class QuantLinear(nn.Module):
         )
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
+        # AWQ-lite: if input_channel_scales is set, the stored weights are W*s,
+        # so we must pre-scale x by 1/s to recover y = (W*s)*(x/s) = W*x.
+        if hasattr(self, "input_channel_scales") and self.input_channel_scales is not None:
+            x = x / self.input_channel_scales.to(x.dtype)
         W = self.dequantize().to(x.dtype)
         bias = self.bias.to(x.dtype) if self.bias is not None else None
         return nn.functional.linear(x, W, bias)

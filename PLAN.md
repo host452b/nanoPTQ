@@ -32,7 +32,7 @@
 
 ### P2 — AWQ
 
-- [ ] Task 8: `nanoptq/algorithms/awq_lite.py` — activation-aware weight scaling
+- [x] Task 8: `nanoptq/algorithms/awq_lite.py` — activation-aware weight scaling
 - [ ] Task 8.5: Wire AWQ to use bundled calibration data by default
 
 ### P3 — GPTQ
