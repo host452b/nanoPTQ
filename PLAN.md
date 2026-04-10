@@ -37,7 +37,7 @@
 
 ### P3 — GPTQ
 
-- [ ] Task 9: `nanoptq/algorithms/gptq_lite.py` — Hessian-based layer-wise update
+- [x] Task 9: `nanoptq/algorithms/gptq_lite.py` — Hessian-based layer-wise update
 - [ ] Task 9.5: Wire GPTQ to use bundled calibration data by default
 
 ### P4 — Usability
