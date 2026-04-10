@@ -27,8 +27,8 @@
 - [x] Task 3: `nanoptq/model/quant_linear.py` — QuantLinear unified abstraction
 - [x] Task 4: `nanoptq/model/hf_loader.py` — HF model loading + Linear surgery
 - [x] Task 5: `nanoptq/algorithms/rtn.py` — RTN baseline (no calibration)
-- [ ] Task 6: `nanoptq/io/safetensors_io.py` — save/load quantized checkpoints
-- [ ] Task 7: `nanoptq/eval/ppl.py` — perplexity (wikitext-2, bundled)
+- [x] Task 6: `nanoptq/io/safetensors_io.py` — save/load quantized checkpoints
+- [x] Task 7: `nanoptq/eval/ppl.py` — perplexity (wikitext-2, bundled)
 
 ### P2 — AWQ
 
