@@ -9,11 +9,11 @@
 
 | Phase | Description | Status |
 |-------|-------------|--------|
-| P0 | Core math + RTN baseline + safetensors I/O + PPL eval | 🔲 Not started |
-| P1 | Group-wise int4 (group_size=128) + bundled datasets | 🔲 Not started |
-| P2 | AWQ-lite (activation-aware channel scaling) | 🔲 Not started |
-| P3 | GPTQ-lite (Hessian-based layer-wise update) | 🔲 Not started |
-| P4 | CLI + end-to-end examples + compare script | 🔲 Not started |
+| P0 | Core math + RTN baseline + safetensors I/O + PPL eval | ✅ Complete |
+| P1 | Group-wise int4 (group_size=128) + bundled datasets | ✅ Complete |
+| P2 | AWQ-lite (activation-aware channel scaling) | ✅ Complete |
+| P3 | GPTQ-lite (Hessian-based layer-wise update) | ✅ Complete |
+| P4 | CLI + end-to-end examples + compare script | ✅ Complete |
 
 ---
 
@@ -33,12 +33,12 @@
 ### P2 — AWQ
 
 - [x] Task 8: `nanoptq/algorithms/awq_lite.py` — activation-aware weight scaling
-- [ ] Task 8.5: Wire AWQ to use bundled calibration data by default
+- [x] Task 8.5: Wire AWQ to use bundled calibration data by default
 
 ### P3 — GPTQ
 
 - [x] Task 9: `nanoptq/algorithms/gptq_lite.py` — Hessian-based layer-wise update
-- [ ] Task 9.5: Wire GPTQ to use bundled calibration data by default
+- [x] Task 9.5: Wire GPTQ to use bundled calibration data by default
 
 ### P4 — Usability
 
@@ -77,4 +77,4 @@ _(moved here as tasks finish)_
 
 ---
 
-*Last updated: 2026-04-10*
+*Last updated: 2026-04-10 — all phases complete*
