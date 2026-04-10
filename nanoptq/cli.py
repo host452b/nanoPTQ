@@ -62,6 +62,9 @@ def cmd_eval(args):
         print(f"Prefill: {result.prefill_ms:.1f} ms | "
               f"Decode: {result.decode_tps:.1f} tok/s | "
               f"Mem: {result.peak_mem_gb:.2f} GB")
+    else:
+        print(f"Unknown metric: {args.metric}. Choose from: ppl, latency")
+        sys.exit(1)
 
 
 def cmd_compare(args):
@@ -149,7 +152,6 @@ def main():
         prog="nanoptq",
         description="nanoPTQ — minimal PTQ toolkit / 极简后训练量化工具",
     )
-    parser.add_argument("--device", default="cuda", help="cuda or cpu")
     sub = parser.add_subparsers(dest="command", required=True)
 
     p_quant = sub.add_parser("quantize", help="Quantize a HuggingFace model")
@@ -158,15 +160,18 @@ def main():
     p_quant.add_argument("--bits", type=int, default=4, choices=[4, 8])
     p_quant.add_argument("--group-size", type=int, default=128, dest="group_size")
     p_quant.add_argument("--output", required=True, help="Output directory")
+    p_quant.add_argument("--device", default="cuda", help="cuda or cpu")
 
     p_eval = sub.add_parser("eval", help="Evaluate a quantized model")
     p_eval.add_argument("--model", required=True, help="Path to quantized model dir")
     p_eval.add_argument("--metric", default="ppl", choices=["ppl", "latency"])
+    p_eval.add_argument("--device", default="cuda", help="cuda or cpu")
 
     p_cmp = sub.add_parser("compare", help="Compare FP16 vs RTN quantized PPL")
     p_cmp.add_argument("--model", required=True)
     p_cmp.add_argument("--bits", type=int, default=4, choices=[4, 8])
     p_cmp.add_argument("--group-size", type=int, default=128, dest="group_size")
+    p_cmp.add_argument("--device", default="cuda", help="cuda or cpu")
 
     args = parser.parse_args()
     dispatch = {"quantize": cmd_quantize, "eval": cmd_eval, "compare": cmd_compare}

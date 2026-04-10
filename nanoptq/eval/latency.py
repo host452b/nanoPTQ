@@ -2,6 +2,7 @@
 """
 Latency benchmarking: tokens/s, prefill time, peak memory.
 延迟基准测试：tokens/s、预填充时间、峰值显存。
+延迟基准测试：tokens/s、预填充时间、解码时间。
 
 Two metrics that matter for production:
   prefill_ms: time to process the prompt (batch of input tokens)
@@ -16,7 +17,7 @@ from dataclasses import dataclass
 @dataclass
 class LatencyResult:
     prefill_ms: float       # time to process prompt
-    decode_tps: float       # tokens per second during generation
+    decode_tps: float        # tokens/s during model.generate() (includes prefill overhead)
     peak_mem_gb: float      # peak GPU memory in GB
     n_new_tokens: int
 
@@ -33,6 +34,9 @@ def benchmark_latency(
     """
     Benchmark prefill and decode latency.
     Returns average over n_runs after n_warmup warm-up passes.
+
+    Note: decode_tps measures total wall time for model.generate() (prefill + decode).
+    It is generate throughput, not pure decode-only speed.
     """
     inputs = tokenizer(prompt, return_tensors="pt").to(device)
     input_len = inputs["input_ids"].shape[1]
