@@ -22,8 +22,8 @@
 ### P0 — Foundation
 
 - [x] Task 0.5: Bundled datasets (data/calibration/ + data/eval/) + dataset loader
-- [ ] Task 1: `nanoptq/core/quant_primitives.py` — symmetric, asymmetric, fake_quant
-- [ ] Task 2: `nanoptq/core/group_quant.py` — group-wise quantization
+- [x] Task 1: `nanoptq/core/quant_primitives.py` — symmetric, asymmetric, fake_quant
+- [x] Task 2: `nanoptq/core/group_quant.py` — group-wise quantization
 - [ ] Task 3: `nanoptq/model/quant_linear.py` — QuantLinear unified abstraction
 - [ ] Task 4: `nanoptq/model/hf_loader.py` — HF model loading + Linear surgery
 - [ ] Task 5: `nanoptq/algorithms/rtn.py` — RTN baseline (no calibration)
