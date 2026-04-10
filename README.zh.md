@@ -143,19 +143,34 @@ python examples/compare_methods.py --model Qwen/Qwen2-0.5B --bits 4
 
 | 步骤 | 文件 | 学到什么 | 时间 |
 |------|------|---------|------|
-| 0 | `docs/Glossary.zh.md` | 每个术语配类比——先读这里 | 10 分钟 |
-| 1 | `nanoptq/core/quant_primitives.py` | 量化数学本质：对称、非对称、伪量化 | 5 分钟 |
-| 2 | `nanoptq/core/group_quant.py` | 为什么逐组量化大幅改善 int4 精度 | 5 分钟 |
-| 3 | `nanoptq/model/quant_linear.py` | 统一量化层抽象；动态反量化 | 10 分钟 |
-| 4 | `nanoptq/algorithms/rtn.py` | 基线：四舍五入搞定 | 5 分钟 |
-| 5 | `nanoptq/algorithms/awq_lite.py` | 激活感知改进 | 15 分钟 |
-| 6 | `nanoptq/algorithms/gptq_lite.py` | 基于 Hessian 的误差补偿 | 20 分钟 |
-| 7 | `examples/compare_methods.py` | 三种方法横向对比 | — |
-| 8 | `docs/flow.zh.md` | 端到端生命周期：离线量化 → 运行时推理 | 10 分钟 |
+| 0 | [docs/Glossary.zh.md](docs/Glossary.zh.md) | 每个术语配类比——先读这里 | 10 分钟 |
+| 1 | [nanoptq/core/quant_primitives.py](nanoptq/core/quant_primitives.py) | 量化数学本质：对称、非对称、伪量化 | 5 分钟 |
+| 2 | [nanoptq/core/group_quant.py](nanoptq/core/group_quant.py) | 为什么逐组量化大幅改善 int4 精度 | 5 分钟 |
+| 3 | [nanoptq/model/quant_linear.py](nanoptq/model/quant_linear.py) | 统一量化层抽象；动态反量化 | 10 分钟 |
+| 4 | [nanoptq/algorithms/rtn.py](nanoptq/algorithms/rtn.py) | 基线：四舍五入搞定 | 5 分钟 |
+| 5 | [nanoptq/algorithms/awq_lite.py](nanoptq/algorithms/awq_lite.py) | 激活感知改进 | 15 分钟 |
+| 6 | [nanoptq/algorithms/gptq_lite.py](nanoptq/algorithms/gptq_lite.py) | 基于 Hessian 的误差补偿 | 20 分钟 |
+| 7 | [examples/compare_methods.py](examples/compare_methods.py) | 三种方法横向对比 | — |
+| 8 | [docs/flow.zh.md](docs/flow.zh.md) | 端到端生命周期：离线量化 → 运行时推理 | 10 分钟 |
 
 ---
 
 ## 项目结构
+
+| 目录 | README | 内容 |
+|------|--------|------|
+| [nanoptq/](nanoptq/) | [→](nanoptq/README.zh.md) | 核心代码库 |
+| [nanoptq/core/](nanoptq/core/) | [→](nanoptq/core/README.zh.md) | 量化数学基元 |
+| [nanoptq/model/](nanoptq/model/) | [→](nanoptq/model/README.zh.md) | QuantLinear + HF 模型加载 |
+| [nanoptq/algorithms/](nanoptq/algorithms/) | [→](nanoptq/algorithms/README.zh.md) | RTN、AWQ、GPTQ 实现 |
+| [nanoptq/io/](nanoptq/io/) | [→](nanoptq/io/README.zh.md) | safetensors 检查点保存/加载 |
+| [nanoptq/eval/](nanoptq/eval/) | [→](nanoptq/eval/README.zh.md) | 困惑度 + 延迟评测 |
+| [nanoptq/data/](nanoptq/data/) | [→](nanoptq/data/README.zh.md) | 数据集加载器 |
+| [examples/](examples/) | [→](examples/README.zh.md) | 可运行演示脚本 |
+| [data/](data/) | [→](data/README.zh.md) | 内置校准/评测数据集 |
+| [scripts/](scripts/) | [→](scripts/README.zh.md) | 一次性准备脚本 |
+| [tests/](tests/) | [→](tests/README.zh.md) | 单元测试 + 集成测试 |
+| [docs/](docs/) | [→](docs/README.zh.md) | 词汇表、流程图 |
 
 ```
 nanoptq/
@@ -178,14 +193,19 @@ nanoptq/
     └── loader.py             # 加载内置校准/评测数据
 data/
 ├── calibration/
-│   └── wikitext2_train_128.jsonl   # 128 条训练样本（已提交至仓库）
+│   └── {name}_128.jsonl      # 每个数据集 128 条样本（7 个数据集已内置）
 └── eval/
-    └── wikitext2_test.jsonl        # wikitext-2 完整测试集
+    └── {name}_eval.jsonl     # 完整评测集
 examples/
 ├── quant_model.py            # 端到端：加载 → 量化 → 评测 → 生成
-└── compare_methods.py        # RTN vs AWQ vs GPTQ 横向对比表
+├── compare_methods.py        # RTN vs AWQ vs GPTQ 横向对比表
+├── precision_tour.py         # bf16 / fp8 / int4 / nvfp4 互动讲解
+└── awq_explained.py          # AWQ 逐步现场演示
+docs/
+├── Glossary.zh.md            # 每个量化术语的类比解释
+├── flow.zh.md                # 流程图：离线量化 + 运行时推理
 scripts/
-└── prepare_data.py           # 从 HuggingFace 重新生成数据（可选）
+└── prepare_data.py           # 从 HuggingFace 下载数据（一次性）
 ```
 
 ---
@@ -205,10 +225,12 @@ scripts/
 
 ## 延伸阅读
 
-- `docs/Glossary.zh.md` —— 每个量化术语的类比解释
-- `docs/flow.zh.md` —— 离线量化与运行时推理的流程图
-- `examples/precision_tour.py` —— bf16、fp8、int4、nvfp4 的互动教程
-- `examples/awq_explained.py` —— AWQ 逐步现场演示
+| 资源 | 说明 |
+|------|------|
+| [docs/Glossary.zh.md](docs/Glossary.zh.md) | 每个量化术语的类比解释 |
+| [docs/flow.zh.md](docs/flow.zh.md) | 流程图：离线量化 + 运行时推理 |
+| [examples/precision_tour.py](examples/precision_tour.py) | bf16、fp8、int4、nvfp4 互动教程 |
+| [examples/awq_explained.py](examples/awq_explained.py) | AWQ 逐步现场演示 |
 
 ## 致敬
 
