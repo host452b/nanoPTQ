@@ -12,15 +12,17 @@
 
 ## Philosophy
 
-Modern quantization frameworks (vLLM, TensorRT-LLM, AutoAWQ) contain millions of lines of
-engineering — CUDA kernel fusion, distributed sharding, multi-backend compatibility.
-**80% of that code solves 20% of the conceptual problem.**
+Modern quantization frameworks (vLLM, TensorRT-LLM, AutoAWQ) are extraordinary engineering —
+CUDA kernel fusion, distributed sharding, multi-backend compatibility, hardware-specific precision
+formats. That engineering is production-critical, but it buries the math.
 
-`nanoPTQ` strips quantization down to its mathematical soul, the same way `nanoGPT` strips
-the Transformer. Each algorithm lives in **one file**. Every intermediate result can be printed.
-Every formula maps directly to a line of code.
+**The 80/20 rule of quantization:** A small number of techniques — RTN, AWQ, GPTQ — cover the vast
+majority of real-world weight quantization deployments. Everything else (QAT, sparsity, mixed-precision
+search, distillation) exists but rarely moves the needle in practice. Learn the critical few, skip
+the rest. `nanoPTQ` teaches exactly those 3 algorithms, the same way `nanoGPT` teaches the Transformer
+by stripping everything non-essential. Each algorithm lives in **one file**. Every formula maps to one line of code.
 
-**What we keep:**
+**Clean demos of only:**
 - `nn.Linear` layers only — the quantization target in every major LLM framework
 - `int4 / int8` weight quantization — covers W4A16, W8A16 industrial workloads
 - Group-wise quantization (group_size=128) — the universal precision/size tradeoff
@@ -28,7 +30,7 @@ Every formula maps directly to a line of code.
 - Perplexity + tokens/s — the two metrics that actually matter
 - Bundled calibration + eval data — one-stop eval, no internet needed after setup
 
-**What we cut:**
+**This project does not include:**
 - QAT, pruning, distillation, sparsity
 - CUDA/Triton kernels — dequant on the fly, backend handles matmul
 - Multi-GPU, FSDP, pipeline parallelism
@@ -146,6 +148,7 @@ If you are learning, read in this order:
 
 | Step | File | What you learn | Time |
 |------|------|----------------|------|
+| 0 | `docs/Glossary.md` | Every term with an analogy — read before anything else | 10 min |
 | 1 | `nanoptq/core/quant_primitives.py` | The math: symmetric, asymmetric, fake_quant | 5 min |
 | 2 | `nanoptq/core/group_quant.py` | Why group-wise dramatically improves int4 | 5 min |
 | 3 | `nanoptq/model/quant_linear.py` | Unified layer abstraction; dequant-on-the-fly | 10 min |
@@ -153,6 +156,7 @@ If you are learning, read in this order:
 | 5 | `nanoptq/algorithms/awq_lite.py` | Activation-aware improvement | 15 min |
 | 6 | `nanoptq/algorithms/gptq_lite.py` | Hessian-based compensation | 20 min |
 | 7 | `examples/compare_methods.py` | See them all side by side | — |
+| 8 | `docs/flow.md` | End-to-end lifecycle: offline quant → runtime inference | 10 min |
 
 ---
 
@@ -203,6 +207,13 @@ scripts/
 | Bundle datasets in `data/` | Reproducible eval without internet; one-stop eval for students |
 
 ---
+
+## Additional Resources
+
+- `docs/Glossary.md` — every quantization term explained with an analogy
+- `docs/flow.md` — flowcharts of offline quantization and runtime inference
+- `examples/precision_tour.py` — interactive tour of bf16, fp8, int4, nvfp4
+- `examples/awq_explained.py` — step-by-step AWQ with live demos
 
 ## Inspired by
 

@@ -12,11 +12,12 @@
 
 ## 项目哲学
 
-现代量化框架（vLLM、TensorRT-LLM、AutoAWQ）包含数百万行工程代码 —— CUDA 算子融合、分布式分片、多后端适配。**其中 80% 的代码只解决了 20% 的概念问题。**
+现代量化框架（vLLM、TensorRT-LLM、AutoAWQ）是了不起的工程杰作 —— CUDA 算子融合、分布式分片、多后端适配、硬件专属精度格式。这些工程能力在生产中不可或缺，但也把数学本质深深掩埋了。
 
-`nanoPTQ` 将量化剥离到数学本质，就像 `nanoGPT` 剥离 Transformer 一样。每个算法住在**一个文件**里。每个中间结果都可以打印。每个公式都直接对应一行代码。
+**量化的 80/20 法则：** 少数几种关键技术——RTN、AWQ、GPTQ——就能覆盖绝大多数工业权重量化部署场景。其余的（QAT、稀疏化、混合精度搜索、蒸馏）都存在，但在实际中很少带来决定性收益。抓住关键的少数，跳过其余的。
+`nanoPTQ` 只教这 3 个，就像 `nanoGPT` 剥掉 Transformer 的一切非核心部分一样。每个算法住在**一个文件**里，每个公式直接对应一行代码。
 
-**保留什么：**
+**只做这些领域的最干净演示：**
 - 只量化 `nn.Linear` —— 所有主流 LLM 框架的量化目标
 - `int4 / int8` 权重量化 —— 覆盖 W4A16、W8A16 工业场景
 - 逐组量化（group_size=128）—— 精度与压缩比的通用折中方案
@@ -24,7 +25,7 @@
 - 困惑度 + tokens/s —— 两个真正有意义的评测指标
 - 内置校准与评测数据 —— 一站式评测，setup 后无需联网
 
-**剔除什么：**
+**本项目不包含以下：**
 - QAT、剪枝、蒸馏、稀疏化
 - CUDA/Triton 算子 —— 动态反量化，matmul 交给后端处理
 - 多 GPU、FSDP、流水线并行
@@ -142,6 +143,7 @@ python examples/compare_methods.py --model Qwen/Qwen2-0.5B --bits 4
 
 | 步骤 | 文件 | 学到什么 | 时间 |
 |------|------|---------|------|
+| 0 | `docs/Glossary.zh.md` | 每个术语配类比——先读这里 | 10 分钟 |
 | 1 | `nanoptq/core/quant_primitives.py` | 量化数学本质：对称、非对称、伪量化 | 5 分钟 |
 | 2 | `nanoptq/core/group_quant.py` | 为什么逐组量化大幅改善 int4 精度 | 5 分钟 |
 | 3 | `nanoptq/model/quant_linear.py` | 统一量化层抽象；动态反量化 | 10 分钟 |
@@ -149,6 +151,7 @@ python examples/compare_methods.py --model Qwen/Qwen2-0.5B --bits 4
 | 5 | `nanoptq/algorithms/awq_lite.py` | 激活感知改进 | 15 分钟 |
 | 6 | `nanoptq/algorithms/gptq_lite.py` | 基于 Hessian 的误差补偿 | 20 分钟 |
 | 7 | `examples/compare_methods.py` | 三种方法横向对比 | — |
+| 8 | `docs/flow.zh.md` | 端到端生命周期：离线量化 → 运行时推理 | 10 分钟 |
 
 ---
 
@@ -199,6 +202,13 @@ scripts/
 | 将数据集内置到 `data/` | 可复现的评测，无需联网；方便学生一站式复现实验 |
 
 ---
+
+## 延伸阅读
+
+- `docs/Glossary.zh.md` —— 每个量化术语的类比解释
+- `docs/flow.zh.md` —— 离线量化与运行时推理的流程图
+- `examples/precision_tour.py` —— bf16、fp8、int4、nvfp4 的互动教程
+- `examples/awq_explained.py` —— AWQ 逐步现场演示
 
 ## 致敬
 
