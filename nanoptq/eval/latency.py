@@ -2,7 +2,6 @@
 """
 Latency benchmarking: tokens/s, prefill time, peak memory.
 延迟基准测试：tokens/s、预填充时间、峰值显存。
-延迟基准测试：tokens/s、预填充时间、解码时间。
 
 Two metrics that matter for production:
   prefill_ms: time to process the prompt (batch of input tokens)

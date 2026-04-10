@@ -42,6 +42,9 @@ def save_quantized_model(
                 tensors[f"{prefix}.zero_points"] = mod.zero_points.cpu()
             if mod.bias is not None:
                 tensors[f"{prefix}.bias"] = mod.bias.cpu()
+            ics = getattr(mod, "input_channel_scales", None)
+            if ics is not None:
+                tensors[f"{prefix}.input_channel_scales"] = ics.cpu()
 
     save_file(tensors, output_dir / "model.safetensors")
 
@@ -87,4 +90,7 @@ def load_quantized_model(
             ql.zero_points = tensors[f"{prefix}.zero_points"]
         if f"{prefix}.bias" in tensors:
             ql.bias = tensors[f"{prefix}.bias"]
+        ics_key = f"{prefix}.input_channel_scales"
+        if ics_key in tensors:
+            ql.register_buffer("input_channel_scales", tensors[ics_key])
         _set_module_by_name(model, name, ql)

@@ -44,7 +44,7 @@ class QuantLinear(nn.Module):
         self.register_buffer("weight_q", torch.zeros(out_features, in_features, dtype=torch.int8))
         self.register_buffer("scales", torch.ones(out_features, num_groups, dtype=torch.float16))
         if not symmetric:
-            self.register_buffer("zero_points", torch.zeros(out_features, num_groups, dtype=torch.int8))
+            self.register_buffer("zero_points", torch.zeros(out_features, num_groups, dtype=torch.uint8))
         else:
             self.zero_points = None
 
