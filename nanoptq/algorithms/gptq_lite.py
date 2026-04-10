@@ -110,6 +110,6 @@ def quantize_linear_gptq(
         q, scales, zps = group_quantize(W, group_size=group_size, bits=bits, symmetric=False)
         ql.weight_q = q.to(torch.int8)
         ql.scales = scales.to(torch.float16)
-        ql.zero_points = zps.to(torch.int8)
+        ql.zero_points = zps.to(torch.uint8)
 
     return ql

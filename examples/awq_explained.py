@@ -22,10 +22,9 @@ import torch.nn as nn
 SEP = "─" * 64
 
 
-def header(n, title_en, title_zh):
+def header(n, title_en, title_zh=""):
     print(f"\n{'═'*64}")
     print(f"  STEP {n} — {title_en}")
-    print(f"  第{n}步   — {title_zh}")
     print(f"{'═'*64}\n")
 
 
@@ -108,8 +107,6 @@ Conclusion:
   One large-weight column forces the global scale to be large.
   All normal columns lose precision because their values barely use any integer slots.
   This is the core limitation of per-tensor quantization.
-
-结论：一个异常列迫使全局 scale 变大，所有正常列精度崩溃。
 """)
     return W, X, Y_fp
 
@@ -161,8 +158,6 @@ def step2_groupwise_fixes_weight_outliers():
 
 Group-wise fixes per-column scale, but doesn't know which columns MATTER MORE
 due to large activations. That's exactly what AWQ adds.
-
-但逐组量化还有不足：它不知道哪些列因为激活值大而"更重要"。这正是 AWQ 解决的。
 """)
     return W, X, Y_fp
 
@@ -194,8 +189,6 @@ def step3_awq_insight():
 
   Naive int4 + group-wise treats all columns equally within each group.
   AWQ gives more precision to high-activation columns.
-
-为什么重要？高激活通道的量化误差对输出影响更大，需要更高精度保护。
 
 AWQ solution — mathematical equivalence trick:
   Y = W @ x  =  (W·s) @ (x/s)     for any per-channel scale s
@@ -272,9 +265,6 @@ Key insight from this comparison:
 
   The activation-aware scaling adds precision exactly where the output
   is most sensitive — proportional to mean activation magnitude.
-
-要点：逐组量化隔离了权重异常（col 5），AWQ 进一步保护了激活异常通道（col 20）。
-AWQ 获得额外精度的方式：按激活强度分配更多整数精度，而非均等分配。
 """)
 
 
