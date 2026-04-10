@@ -54,8 +54,8 @@ def cmd_eval(args):
 
     if args.metric == "ppl":
         from nanoptq.eval.ppl import evaluate_ppl_bundled
-        ppl = evaluate_ppl_bundled(model, tokenizer, device=args.device)
-        print(f"Perplexity (wikitext-2, bundled): {ppl:.2f}")
+        ppl = evaluate_ppl_bundled(model, tokenizer, dataset=args.dataset, device=args.device)
+        print(f"Perplexity ({args.dataset}): {ppl:.2f}")
     elif args.metric == "latency":
         from nanoptq.eval.latency import benchmark_latency
         result = benchmark_latency(model, tokenizer, device=args.device)
@@ -76,14 +76,14 @@ def cmd_compare(args):
     print(f"Loading {args.model} ...")
     model_fp16, tokenizer = load_hf_model(args.model, device=args.device)
 
-    print("FP16 baseline PPL ...")
-    ppl_fp16 = evaluate_ppl_bundled(model_fp16, tokenizer, device=args.device)
+    print(f"FP16 baseline PPL ({args.dataset}) ...")
+    ppl_fp16 = evaluate_ppl_bundled(model_fp16, tokenizer, dataset=args.dataset, device=args.device)
 
     print("RTN quantization ...")
     model_rtn = copy.deepcopy(model_fp16)
     quantize_model_rtn(model_rtn, bits=args.bits, group_size=args.group_size,
                        skip_modules=["lm_head"])
-    ppl_rtn = evaluate_ppl_bundled(model_rtn, tokenizer, device=args.device)
+    ppl_rtn = evaluate_ppl_bundled(model_rtn, tokenizer, dataset=args.dataset, device=args.device)
 
     print(f"\n{'Method':<20} {'PPL':>8} {'ΔPPL':>8}")
     print("-" * 40)
@@ -98,7 +98,8 @@ def _collect_calibration_data(model, tokenizer, args):
     import torch.nn as nn
     from nanoptq.data.loader import load_calibration_texts
 
-    texts = load_calibration_texts()[:32]
+    dataset = getattr(args, "dataset", "wikitext2")
+    texts = load_calibration_texts(dataset=dataset)[:32]
     activations = {}
 
     def make_hook(name):
@@ -154,23 +155,31 @@ def main():
     )
     sub = parser.add_subparsers(dest="command", required=True)
 
+    _DATASETS = ["wikitext2", "alpaca", "gsm8k", "humaneval", "qa", "sharegpt", "sum"]
+
     p_quant = sub.add_parser("quantize", help="Quantize a HuggingFace model")
     p_quant.add_argument("--model", required=True, help="HF model ID or local path")
     p_quant.add_argument("--method", default="rtn", choices=["rtn", "awq", "gptq"])
     p_quant.add_argument("--bits", type=int, default=4, choices=[4, 8])
     p_quant.add_argument("--group-size", type=int, default=128, dest="group_size")
     p_quant.add_argument("--output", required=True, help="Output directory")
+    p_quant.add_argument("--calib-dataset", default="wikitext2", choices=_DATASETS,
+                         dest="dataset", help="Calibration dataset for AWQ/GPTQ")
     p_quant.add_argument("--device", default="cuda", help="cuda or cpu")
 
     p_eval = sub.add_parser("eval", help="Evaluate a quantized model")
     p_eval.add_argument("--model", required=True, help="Path to quantized model dir")
     p_eval.add_argument("--metric", default="ppl", choices=["ppl", "latency"])
+    p_eval.add_argument("--dataset", default="wikitext2", choices=_DATASETS,
+                        help="Eval dataset for PPL (default: wikitext2)")
     p_eval.add_argument("--device", default="cuda", help="cuda or cpu")
 
     p_cmp = sub.add_parser("compare", help="Compare FP16 vs RTN quantized PPL")
     p_cmp.add_argument("--model", required=True)
     p_cmp.add_argument("--bits", type=int, default=4, choices=[4, 8])
     p_cmp.add_argument("--group-size", type=int, default=128, dest="group_size")
+    p_cmp.add_argument("--dataset", default="wikitext2", choices=_DATASETS,
+                       help="Eval dataset for PPL (default: wikitext2)")
     p_cmp.add_argument("--device", default="cuda", help="cuda or cpu")
 
     args = parser.parse_args()

@@ -67,17 +67,20 @@ def compute_perplexity_tokens(
 def evaluate_ppl_bundled(
     model: nn.Module,
     tokenizer,
+    dataset: str = "wikitext2",
     stride: int = 512,
     max_length: int = 2048,
     device: str = "cuda",
 ) -> float:
     """
-    Evaluate PPL using bundled wikitext-2 data — no internet required.
-    This is the default eval path for nanoPTQ.
+    Evaluate PPL using bundled data — no internet required.
     使用内置数据集评估困惑度，无需联网。
+
+    Args:
+        dataset: wikitext2 (default), alpaca, gsm8k, humaneval, qa, sharegpt, sum
     """
     from nanoptq.data.loader import load_eval_texts
-    texts = load_eval_texts()
+    texts = load_eval_texts(dataset=dataset)
     text = "\n\n".join(texts)
     tokens = tokenizer(text, return_tensors="pt")["input_ids"]
     return compute_perplexity_tokens(model, tokens, stride=stride, max_length=max_length, device=device)
