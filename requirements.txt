@@ -1,5 +1,3 @@
-torch>=2.2.0
-transformers>=4.40.0
-safetensors>=0.4.0
-datasets>=2.18.0
-pytest>=8.0
+# Install all dependencies via:
+#   pip install -e ".[dev]"
+# See pyproject.toml for the full dependency specification.

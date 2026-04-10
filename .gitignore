@@ -9,3 +9,12 @@ build/
 .coverage
 htmlcov/
 *.safetensors
+.venv/
+venv/
+*.pt
+*.bin
+*.log
+*-int4/
+*-int8/
+*-fp8/
+output/
