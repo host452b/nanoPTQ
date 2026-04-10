@@ -42,9 +42,9 @@
 
 ### P4 — Usability
 
-- [ ] Task 10: `nanoptq/eval/latency.py` — tokens/s, prefill, peak memory
-- [ ] Task 11: `nanoptq/cli.py` — quantize / eval / compare
-- [ ] Task 12: `examples/` — end-to-end scripts
+- [x] Task 10: `nanoptq/eval/latency.py` — tokens/s, prefill, peak memory
+- [x] Task 11: `nanoptq/cli.py` — quantize / eval / compare
+- [x] Task 12: `examples/` — end-to-end scripts
 
 ---
 
