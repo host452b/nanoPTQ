@@ -11,6 +11,8 @@ Output:
   data/calibration/wikitext2_train_128.jsonl   — 128 samples, calibration
   data/eval/wikitext2_test.jsonl               — test split for PPL
 """
+# Generated with: datasets library (check `pip show datasets` for version used)
+# Regenerating may produce slightly different samples if HuggingFace updates the dataset.
 import json
 import pathlib
 from datasets import load_dataset

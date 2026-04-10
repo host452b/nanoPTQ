@@ -29,7 +29,7 @@ def load_calibration_texts(path: str | pathlib.Path | None = None) -> list[str]:
             f"Bundled calibration data not found at {p}.\n"
             "Run `python scripts/prepare_data.py` to generate it."
         )
-    with open(p) as f:
+    with open(p, encoding="utf-8") as f:
         return [json.loads(line)["text"] for line in f if line.strip()]
 
 
@@ -44,5 +44,5 @@ def load_eval_texts(path: str | pathlib.Path | None = None) -> list[str]:
             f"Bundled eval data not found at {p}.\n"
             "Run `python scripts/prepare_data.py` to generate it."
         )
-    with open(p) as f:
+    with open(p, encoding="utf-8") as f:
         return [json.loads(line)["text"] for line in f if line.strip()]
