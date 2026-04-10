@@ -44,6 +44,7 @@ def main():
     ppl_q = evaluate_ppl_wikitext(model, tokenizer, device=args.device)
     lat_q = benchmark_latency(model, tokenizer, device=args.device)
     print(f"  Quant PPL: {ppl_q:.2f} | {lat_q.decode_tps:.1f} tok/s | {lat_q.peak_mem_gb:.2f} GB")
+    print(f"\n  PPL delta: +{ppl_q - ppl_fp16:.2f}")
 
     save_quantized_model(model, args.output, bits=args.bits,
                          group_size=args.group_size, method=args.method)
